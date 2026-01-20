@@ -1,25 +1,37 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
-import Header from './components/Header';
 import MobileMenuButton from './components/MobileMenuButton';
-import Dashboard from './components/Dashboard';
-import Settings from './components/Settings';
-import SaaS from './components/SaaS';
-import ModelCatalog from './components/ModelCatalog';
-import AppWizard from './components/AppWizard';
-import PromptResult from './components/PromptResult';
-import Projects from './components/Projects';
-import LandingPages from './components/LandingPages';
-import Prospector from './components/Prospector';
-import Copywriter from './components/Copywriter';
-import Contracts from './components/Contracts';
-import Academy from './components/Academy';
-import Team from './components/Team';
-import Help from './components/Help';
-import LoginPage from './components/LoginPage';
-import Challenge8D from './components/Challenge8D';
 import { supabase } from './src/lib/supabase';
 import { IntelligenceEngine } from './src/lib/intelligence';
+
+// Lazy loading components for performance optimization
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const Header = lazy(() => import('./components/Header'));
+const Settings = lazy(() => import('./components/Settings'));
+const SaaS = lazy(() => import('./components/SaaS'));
+const ModelCatalog = lazy(() => import('./components/ModelCatalog'));
+const AppWizard = lazy(() => import('./components/AppWizard'));
+const PromptResult = lazy(() => import('./components/PromptResult'));
+const Projects = lazy(() => import('./components/Projects'));
+const LandingPages = lazy(() => import('./components/LandingPages'));
+const Prospector = lazy(() => import('./components/Prospector'));
+const Copywriter = lazy(() => import('./components/Copywriter'));
+const Contracts = lazy(() => import('./components/Contracts'));
+const Academy = lazy(() => import('./components/Academy'));
+const Team = lazy(() => import('./components/Team'));
+const Help = lazy(() => import('./components/Help'));
+const LoginPage = lazy(() => import('./components/LoginPage'));
+const Challenge8D = lazy(() => import('./components/Challenge8D'));
+
+// Shimmer/Loading state for lazy components
+const LoadingScreen = () => (
+  <div className="flex-1 flex items-center justify-center bg-[#050507]">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-12 h-12 border-2 border-white/5 border-t-purple-500 rounded-full animate-spin" />
+      <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.4em] animate-pulse">Sincronizando_</span>
+    </div>
+  </div>
+);
 
 export interface Project {
   id: string;
@@ -259,6 +271,24 @@ const App: React.FC = () => {
     handleUpdateProjects(projects.filter(p => p.id !== id));
   };
 
+  const preloadComponent = (id: string) => {
+    switch (id) {
+      case 'dashboard': import('./components/Dashboard'); break;
+      case 'saas':
+      case 'materializar_sas': import('./components/SaaS'); break;
+      case 'projects': import('./components/Projects'); break;
+      case 'lp': import('./components/LandingPages'); break;
+      case 'prospector': import('./components/Prospector'); break;
+      case 'copywriter': import('./components/Copywriter'); break;
+      case 'contracts': import('./components/Contracts'); break;
+      case 'academy': import('./components/Academy'); break;
+      case 'team': import('./components/Team'); break;
+      case 'challenge8d': import('./components/Challenge8D'); break;
+      case 'help': import('./components/Help'); break;
+      case 'settings': import('./components/Settings'); break;
+    }
+  };
+
   const handleTabChange = (id: string) => {
     setActiveTab(id);
     setIsSidebarOpen(false);
@@ -440,7 +470,11 @@ const App: React.FC = () => {
   };
 
   if (!isLoggedIn) {
-    return <LoginPage onLogin={handleLogin} />;
+    return (
+      <Suspense fallback={<LoadingScreen />}>
+        <LoginPage onLogin={handleLogin} />
+      </Suspense>
+    );
   }
 
   return (
@@ -461,6 +495,7 @@ const App: React.FC = () => {
         activeTab={activeTab}
         setActiveTab={handleTabChange}
         onLogout={handleLogout}
+        onHoverItem={preloadComponent}
         userName={userData.name || userData.email || "Usuário"}
         userRole={userData.role || "Acesso Master"}
         userPhoto={userData.photo}
@@ -468,7 +503,9 @@ const App: React.FC = () => {
       />
 
       <main className="flex-1 flex flex-col transition-all duration-300 md:ml-72 w-full">
-        {renderContent()}
+        <Suspense fallback={<LoadingScreen />}>
+          {renderContent()}
+        </Suspense>
       </main>
     </div>
   );

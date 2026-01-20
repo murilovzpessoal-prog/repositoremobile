@@ -7,6 +7,7 @@ interface SidebarProps {
   activeTab: string;
   setActiveTab: (id: string) => void;
   onLogout: () => void;
+  onHoverItem?: (id: string) => void;
   userName?: string;
   userRole?: string;
   userPhoto?: string;
@@ -41,16 +42,17 @@ const NexbuildLogo = () => (
   </div>
 );
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  isOpen, 
+const Sidebar: React.FC<SidebarProps> = ({
+  isOpen,
   toggleSidebar,
-  activeTab, 
-  setActiveTab, 
-  onLogout, 
-  userName = "Usuário", 
-  userRole = "Membro", 
-  userPhoto = "", 
-  academyProgress = 0 
+  activeTab,
+  setActiveTab,
+  onLogout,
+  onHoverItem,
+  userName = "Usuário",
+  userRole = "Membro",
+  userPhoto = "",
+  academyProgress = 0
 }) => {
   const menuItems = [
     { id: 'dashboard', label: 'Visão Geral' },
@@ -68,9 +70,9 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <aside className={`fixed inset-y-0 left-0 z-[100] w-72 bg-[#020203] flex flex-col transition-all duration-500 md:translate-x-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'} shadow-[40px_0_100px_rgba(0,0,0,0.5)]`}>
       <div className="absolute right-0 top-0 h-full w-[1px] bg-gradient-to-b from-transparent via-[#A855F7]/10 to-transparent z-20" />
-      
+
       {/* Mobile close button */}
-      <button 
+      <button
         onClick={toggleSidebar}
         className="md:hidden absolute top-6 right-6 p-2 text-gray-600 hover:text-white transition-colors"
       >
@@ -94,13 +96,12 @@ const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center py-3.5 transition-all duration-300 group relative ${
-                isActive ? 'text-white' : 'text-gray-600 hover:text-white/70'
-              }`}
+              onMouseEnter={() => onHoverItem?.(item.id)}
+              className={`w-full flex items-center py-3.5 transition-all duration-300 group relative ${isActive ? 'text-white' : 'text-gray-600 hover:text-white/70'
+                }`}
             >
-              <span className={`text-[13px] tracking-tight transition-all duration-300 antialiased ${
-                isActive ? "font-black" : "font-medium"
-              }`}>
+              <span className={`text-[13px] tracking-tight transition-all duration-300 antialiased ${isActive ? "font-black" : "font-medium"
+                }`}>
                 {item.label}
               </span>
               {isActive && (
@@ -113,27 +114,27 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Persistence Visibility: Progress Hub */}
       <div className="px-12 py-6 border-t border-white/[0.02] bg-white/[0.01]">
-         <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-               <Zap size={10} className="text-purple-500" />
-               <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Protocolo Academy</span>
-            </div>
-            <span className="text-[10px] font-black text-white italic">{academyProgress}%</span>
-         </div>
-         <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-            <div className="h-full bg-purple-600 transition-all duration-1000" style={{ width: `${academyProgress}%` }} />
-         </div>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Zap size={10} className="text-purple-500" />
+            <span className="text-[9px] font-black text-gray-600 uppercase tracking-widest">Protocolo Academy</span>
+          </div>
+          <span className="text-[10px] font-black text-white italic">{academyProgress}%</span>
+        </div>
+        <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+          <div className="h-full bg-purple-600 transition-all duration-1000" style={{ width: `${academyProgress}%` }} />
+        </div>
       </div>
 
       <div className="p-12 mt-auto border-t border-white/[0.02]">
         <div className="space-y-8">
           <div className="flex items-center gap-4 group cursor-pointer" onClick={() => setActiveTab('settings')}>
             <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shrink-0 group-hover:border-purple-500/40 transition-colors">
-               {userPhoto ? (
-                 <img src={userPhoto} alt="User" className="w-full h-full object-cover" />
-               ) : (
-                 <UserIcon size={18} className="text-gray-700" />
-               )}
+              {userPhoto ? (
+                <img src={userPhoto} alt="User" className="w-full h-full object-cover" />
+              ) : (
+                <UserIcon size={18} className="text-gray-700" />
+              )}
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-2 mb-0.5">
@@ -145,15 +146,14 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <div className="flex flex-col gap-4 pt-6 border-t border-white/[0.03]">
-            <button 
+            <button
               onClick={() => setActiveTab('settings')}
-              className={`text-left text-[9px] font-black uppercase tracking-[0.3em] transition-all italic antialiased ${
-                activeTab === 'settings' ? 'text-white' : 'text-gray-700 hover:text-white/60'
-              }`}
+              className={`text-left text-[9px] font-black uppercase tracking-[0.3em] transition-all italic antialiased ${activeTab === 'settings' ? 'text-white' : 'text-gray-700 hover:text-white/60'
+                }`}
             >
               Configurações
             </button>
-            <button 
+            <button
               onClick={onLogout}
               className="text-left text-[9px] font-black text-red-950/30 hover:text-red-600/60 uppercase tracking-[0.3em] transition-all italic antialiased"
             >

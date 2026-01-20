@@ -21,7 +21,7 @@ import { LocationMap } from './LocationMap';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../src/lib/supabase';
 
-// --- Globe Component Implementation ---
+// --- Globe Component Implementation (Optimized for Turbo Performance) ---
 const GLOBE_CONFIG: COBEOptions = {
   width: 800,
   height: 800,
@@ -31,7 +31,7 @@ const GLOBE_CONFIG: COBEOptions = {
   theta: 0.3,
   dark: 1,
   diffuse: 1.2,
-  mapSamples: 12000,
+  mapSamples: 8000, // Reduced from 12000 for better performance
   mapBrightness: 6,
   baseColor: [0.3, 0.3, 0.3],
   markerColor: [124 / 255, 58 / 255, 237 / 255],
@@ -54,31 +54,14 @@ function Globe({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointerInteracting = useRef<number | null>(null);
   const pointerInteractionMovement = useRef(0);
-  const [r, setR] = useState(0);
   const phiRef = useRef(0);
+  const rotationRef = useRef(0);
   const [isReady, setIsReady] = useState(false);
-
-  const updatePointerInteraction = (value: number | null) => {
-    pointerInteracting.current = value;
-    if (canvasRef.current) {
-      canvasRef.current.style.cursor = value !== null ? "grabbing" : "grab";
-    }
-  };
-
-  const updateMovement = (clientX: number) => {
-    if (pointerInteracting.current !== null) {
-      const delta = clientX - pointerInteracting.current;
-      pointerInteractionMovement.current = delta;
-      setR(delta / 200);
-    }
-  };
 
   useEffect(() => {
     let width = 0;
     const onResize = () => {
-      if (canvasRef.current) {
-        width = canvasRef.current.offsetWidth;
-      }
+      if (canvasRef.current) width = canvasRef.current.offsetWidth;
     };
     window.addEventListener("resize", onResize);
     onResize();
@@ -88,8 +71,10 @@ function Globe({ className }: { className?: string }) {
       width: width * 2 || 800,
       height: width * 2 || 800,
       onRender: (state) => {
-        if (!pointerInteracting.current) phiRef.current += 0.005;
-        state.phi = phiRef.current + r;
+        if (!pointerInteracting.current) {
+          phiRef.current += 0.005;
+        }
+        state.phi = phiRef.current + rotationRef.current;
         state.width = width * 2;
         state.height = width * 2;
       },
@@ -102,18 +87,45 @@ function Globe({ className }: { className?: string }) {
       clearTimeout(readyTimer);
       window.removeEventListener("resize", onResize);
     };
-  }, [r]);
+  }, []); // Run only once
+
+  const updatePointerInteraction = (value: number | null) => {
+    pointerInteracting.current = value;
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = value !== null ? "grabbing" : "grab";
+    }
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    updatePointerInteraction(e.clientX - pointerInteractionMovement.current);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (pointerInteracting.current !== null) {
+      const delta = e.clientX - pointerInteracting.current;
+      pointerInteractionMovement.current = delta;
+      rotationRef.current = delta / 200;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (pointerInteracting.current !== null && e.touches[0]) {
+      const delta = e.touches[0].clientX - pointerInteracting.current;
+      pointerInteractionMovement.current = delta;
+      rotationRef.current = delta / 200;
+    }
+  };
 
   return (
     <div className={`relative mx-auto aspect-square w-full ${className}`}>
       <canvas
         className={`size-full transition-opacity duration-700 ease-in-out cursor-grab ${isReady ? 'opacity-100' : 'opacity-0'}`}
         ref={canvasRef}
-        onPointerDown={(e) => updatePointerInteraction(e.clientX - pointerInteractionMovement.current)}
+        onPointerDown={handlePointerDown}
         onPointerUp={() => updatePointerInteraction(null)}
         onPointerOut={() => updatePointerInteraction(null)}
-        onMouseMove={(e) => updateMovement(e.clientX)}
-        onTouchMove={(e) => e.touches[0] && updateMovement(e.touches[0].clientX)}
+        onMouseMove={handleMouseMove}
+        onTouchMove={handleTouchMove}
       />
     </div>
   );
