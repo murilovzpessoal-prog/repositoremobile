@@ -64,15 +64,34 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ checked, onChange, id }) =>
     );
 };
 
-// VideoBackground Component - Optimized for Max Clarity and UHD Quality
+// VideoBackground Component - Optimized for Max Clarity and UHD Quality (Adaptive)
 const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoUrl }) => {
+    // Determine mobile state for optimization
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
+    // Cloudinary Transformations
+    // Desktop: Original UHD
+    // Mobile: Resize to 480px width, Auto Format, heavy compression for speed
+    const optimizedVideoUrl = isMobile
+        ? videoUrl.replace('/upload/', '/upload/w_480,f_auto,q_auto/')
+        : videoUrl;
+
+    // Generate poster from video URL (taking frame at 0s)
+    const posterUrl = videoUrl.replace('/upload/', '/upload/so_0,w_480,f_jpg/').replace('.mp4', '.jpg');
+
     return (
         <div className="absolute inset-0 w-full h-full overflow-hidden bg-black">
             <div className="absolute inset-0 bg-gradient-to-br from-black/40 via-transparent to-purple-900/5 z-10" />
             <div className="absolute inset-0 bg-black/5 z-10" />
 
+            {/* Poster Static Image serves as immediate fallback to prevent black screen */}
+            <div
+                className="absolute inset-0 bg-cover bg-center opacity-95"
+                style={{ backgroundImage: `url(${posterUrl})` }}
+            />
+
             <video
-                key={videoUrl}
+                key={optimizedVideoUrl}
                 className="absolute inset-0 min-w-full min-h-full object-cover scale-[1.01] opacity-95 transition-opacity duration-1000"
                 style={{ objectPosition: 'center' }}
                 autoPlay
@@ -80,8 +99,9 @@ const VideoBackground: React.FC<VideoBackgroundProps> = ({ videoUrl }) => {
                 muted
                 playsInline
                 preload="auto"
+                poster={posterUrl}
             >
-                <source src={videoUrl} type="video/mp4" />
+                <source src={optimizedVideoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
             </video>
 
