@@ -316,21 +316,69 @@ const App: React.FC = () => {
     setSaasView('result');
   };
 
+  // Auto-logout on inactivity (3 minutes) & Optimistic Logout
+  useEffect(() => {
+    const checkInactivity = () => {
+      const lastActive = localStorage.getItem('nb_last_active');
+      if (lastActive) {
+        const diff = Date.now() - parseInt(lastActive);
+        // Se inativo por mais de 3 minutos (180000ms), forçar logout
+        if (diff > 3 * 60 * 1000) {
+          handleLogout();
+        }
+      }
+      localStorage.setItem('nb_last_active', Date.now().toString());
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkInactivity();
+      } else {
+        localStorage.setItem('nb_last_active', Date.now().toString());
+      }
+    };
+
+    // Check on clicks too to keep session alive while using
+    const keepAlive = () => localStorage.setItem('nb_last_active', Date.now().toString());
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('click', keepAlive);
+    window.addEventListener('touchstart', keepAlive);
+
+    // Initial check
+    checkInactivity();
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('click', keepAlive);
+      window.removeEventListener('touchstart', keepAlive);
+    };
+  }, []);
+
   const handleLogin = (email: string, remember: boolean) => {
     const uid = email.toLowerCase().trim();
     if (remember) {
       localStorage.setItem(SESSION_KEY, uid);
     }
+    // Set active immediately
+    localStorage.setItem('nb_last_active', Date.now().toString());
     setCurrentUid(uid);
     setIsLoggedIn(true);
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem(SESSION_KEY);
+    // 1. Optimistic UI Update: Instant feedback
     setIsLoggedIn(false);
     setCurrentUid(null);
     setActiveTab('dashboard');
+    localStorage.removeItem(SESSION_KEY);
+
+    // 2. Perform network cleanup in background (non-blocking)
+    try {
+      await supabase.auth.signOut();
+    } catch (err) {
+      console.error("Background signout error (ignored for UX)", err);
+    }
   };
 
   const renderContent = () => {
