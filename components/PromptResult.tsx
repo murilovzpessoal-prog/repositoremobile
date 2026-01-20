@@ -25,6 +25,8 @@ const PromptResult: React.FC<PromptResultProps> = ({ data, onBack }) => {
     // 1. Prioridade Máxima: Prompt gerado pelo IntelligenceEngine (v3.0)
     if (data?.technical_prompt) return data.technical_prompt;
     if (data?.details?.technical_prompt) return data.details.technical_prompt;
+    if (data?.cro_prompt) return data.cro_prompt;
+    if (data?.details?.cro_prompt) return data.details.cro_prompt;
 
     // 2. Fallback de Luxo: Se por algum motivo o prompt não foi passado, gerar um briefing sênior on-the-fly
     const appName = data?.appName || data?.name || 'Protocol_Initialization';

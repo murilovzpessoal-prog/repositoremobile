@@ -134,7 +134,7 @@ const LandingPages: React.FC<{ onGenerateUpdate: (data: any) => void }> = ({ onG
         setProgress(current);
         if (current >= 100) {
           clearInterval(interval);
-          onGenerateUpdate({ ...formData, type: 'new' });
+          onGenerateUpdate({ ...formData, technical_prompt: prompt, type: 'new' });
         }
       }, 40);
 
