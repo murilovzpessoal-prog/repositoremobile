@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, LayoutGrid, Moon, Code2, Bookmark, Cpu, Zap, ShieldCheck } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, Cpu, Zap, ShieldCheck } from 'lucide-react';
 import { supabase } from '../src/lib/supabase';
 
 interface LoginPageProps {
@@ -245,17 +245,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
 
             <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 opacity-10 pointer-events-none text-center w-full px-4">
                 <span className="text-[7px] md:text-[10px] text-white uppercase tracking-[0.4em] md:tracking-[1em] font-light italic font-mono">Nexbuild_Elite_Architecture // 2025</span>
-            </div>
-
-            {/* Subtle HUD Elements */}
-            <div className="absolute top-10 left-10 z-20 flex gap-4 opacity-5">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.01] border border-white/5 flex items-center justify-center text-white"><LayoutGrid size={18} /></div>
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.01] border border-white/5 flex items-center justify-center text-white"><Moon size={18} /></div>
-            </div>
-
-            <div className="absolute top-10 right-10 z-20 flex gap-4 opacity-5">
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.01] border border-white/5 flex items-center justify-center text-white"><Code2 size={18} /></div>
-                <div className="w-12 h-12 rounded-2xl bg-white/[0.01] border border-white/5 flex items-center justify-center text-white"><Bookmark size={18} /></div>
             </div>
         </div>
     );
