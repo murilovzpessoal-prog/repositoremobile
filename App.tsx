@@ -490,12 +490,14 @@ const App: React.FC = () => {
         );
       case 'challenge8d':
         return (
-          <div className="p-4 md:px-10 py-4 md:py-10 max-w-[1600px] w-full mx-auto relative z-10">
+          <div className="p-4 md:px-10 py-4 md:py-10 max-w-[1600px] w-full mx-auto relative z-10 flex flex-col min-h-[calc(100vh-20px)]">
             <MobileMenuButton onOpenMenu={() => setIsSidebarOpen(true)} />
-            <Challenge8D
-              completedDays={challengeProgress}
-              onUpdateProgress={handleUpdateChallenge}
-            />
+            <div className="flex-1 flex flex-col justify-center">
+              <Challenge8D
+                completedDays={challengeProgress}
+                onUpdateProgress={handleUpdateChallenge}
+              />
+            </div>
           </div>
         );
       case 'help':

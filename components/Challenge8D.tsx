@@ -79,7 +79,7 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
 
   if (view === 'intro') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050507] p-8 text-center animate-in fade-in duration-1000 overflow-hidden relative">
+      <div className="w-full flex-1 flex flex-col items-center justify-center bg-[#050507] p-4 text-center animate-in fade-in duration-1000 overflow-hidden relative min-h-[500px]">
         <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-purple-600/5 blur-[120px] rounded-full" />
         <div className="absolute bottom-[10%] right-[10%] w-[300px] h-[300px] bg-blue-600/5 blur-[100px] rounded-full" />
 
