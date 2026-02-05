@@ -63,6 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({
     { id: 'copywriter', label: 'Copywriter IA' },
     { id: 'contracts', label: 'Contratos' },
     { id: 'academy', label: 'Academy' },
+    { id: 'challenge8d', label: 'Desafio 8D SaaS' },
     { id: 'team', label: 'Equipe' },
     { id: 'help', label: 'Ajuda' },
   ];

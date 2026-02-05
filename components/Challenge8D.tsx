@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Zap, 
-  Calendar, 
-  CheckCircle2, 
-  Lock, 
-  ArrowRight, 
-  ChevronLeft, 
-  ShieldCheck, 
-  Award, 
-  Rocket, 
+import {
+  Zap,
+  Calendar,
+  CheckCircle2,
+  Lock,
+  ArrowRight,
+  ChevronLeft,
+  ShieldCheck,
+  Award,
+  Rocket,
   Trophy,
   Target,
   Sparkles,
@@ -16,7 +16,8 @@ import {
   Download,
   Info,
   Clock,
-  X
+  X,
+  ExternalLink
 } from 'lucide-react';
 import { ChallengeDayProgress } from '../App';
 
@@ -64,9 +65,16 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
     const prevDay = completedDays.find(p => p.day === dayId - 1);
     if (!prevDay) return { isLocked: true, isCompleted: false, isNext: false };
     const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
-    return (currentTime - prevDay.completedAt >= TWENTY_FOUR_HOURS) 
-      ? { isLocked: false, isCompleted: false, isNext: true }
-      : { isLocked: true, isCompleted: false, isNext: false };
+    const timeDiff = currentTime - prevDay.completedAt;
+    if (timeDiff < TWENTY_FOUR_HOURS) return { isLocked: true, isCompleted: false, isNext: false };
+    return { isLocked: false, isCompleted: false, isNext: true };
+  };
+
+  const handleCompleteDay = (dayId: number) => {
+    if (completedDays.some(p => p.day === dayId)) return;
+    const newProgress = [...completedDays, { day: dayId, completedAt: Date.now() }];
+    onUpdateProgress(newProgress);
+    setSelectedDay(null);
   };
 
   if (view === 'intro') {
@@ -92,7 +100,7 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto w-full space-y-6 md:space-y-12 pb-32 px-4 md:px-0 animate-in fade-in">
+    <div className="max-w-[1400px] mx-auto w-full space-y-6 md:space-y-12 pb-32 px-4 md:px-0 animate-in fade-in relative">
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-white/5 pb-6">
         <div className="space-y-2">
           <button onClick={() => setView('intro')} className="flex items-center gap-2 text-gray-600 hover:text-white transition-all text-[8px] font-black uppercase tracking-[0.2em] italic"><ChevronLeft size={12} /> VOLTAR</button>
@@ -103,14 +111,19 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
             <span className="text-[8px] font-black text-white uppercase tracking-widest italic">{completedDays.length}/8 OK</span>
             <span className="text-lg font-black text-white italic">{progressPercent}%</span>
           </div>
-          <div className="h-1 w-40 bg-white/5 rounded-full overflow-hidden"><div className="h-full bg-purple-600 transition-all duration-1000" style={{ width: `${progressPercent}%` }} /></div>
+          <div className="h-1 w-40 bg-white/5 rounded-full overflow-hidden text-left"><div className="h-full bg-purple-600 transition-all duration-1000" style={{ width: `${progressPercent}%` }} /></div>
         </div>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {CHALLENGE_DAYS.map((day) => {
           const { isLocked, isCompleted, isNext } = getDayStatus(day.id);
           return (
-            <div key={day.id} className={`group h-[220px] rounded-[32px] border transition-all duration-700 p-6 flex flex-col ${isCompleted ? 'bg-emerald-500/[0.02] border-emerald-500/20' : isNext ? 'bg-purple-600/[0.03] border-purple-500/40' : 'bg-white/[0.01] border-white/5 opacity-40 grayscale'}`}>
+            <div
+              key={day.id}
+              onClick={() => !isLocked && setSelectedDay(day)}
+              className={`group h-[220px] rounded-[32px] border transition-all duration-700 p-6 flex flex-col cursor-pointer ${isCompleted ? 'bg-emerald-500/[0.02] border-emerald-500/20' : isNext ? 'bg-purple-600/[0.03] border-purple-500/40 hover:border-purple-500/60' : 'bg-white/[0.01] border-white/5 opacity-40 grayscale cursor-not-allowed'}`}
+            >
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <span className={`text-[8px] font-black uppercase tracking-[0.2em] ${isCompleted ? 'text-emerald-500' : 'text-purple-400'}`}>DIA_0{day.id}</span>
@@ -127,6 +140,67 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
           );
         })}
       </div>
+
+      {/* Task Details View */}
+      {selectedDay && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-6 bg-black/80 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-300">
+          <div className="bg-[#0A0A0C] border border-white/10 w-full max-w-2xl rounded-[40px] overflow-hidden shadow-[0_0_100px_rgba(168,85,247,0.15)] relative">
+            <button
+              onClick={() => setSelectedDay(null)}
+              className="absolute top-8 right-8 text-gray-500 hover:text-white transition-colors"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="p-8 md:p-14 space-y-10 text-center">
+              <div className="space-y-4">
+                <div className="w-20 h-20 rounded-3xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 mx-auto mb-6">
+                  {selectedDay.icon}
+                </div>
+                <span className="text-[10px] font-black text-purple-500 uppercase tracking-[0.4em] italic leading-none">DIA_0{selectedDay.id}_Missão</span>
+                <h3 className="text-2xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-none">{selectedDay.title}</h3>
+                <p className="text-gray-500 text-sm md:text-lg italic opacity-80 max-w-md mx-auto">{selectedDay.task}</p>
+              </div>
+
+              {completedDays.some(p => p.day === selectedDay.id) ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center gap-3 text-emerald-500 font-black italic uppercase tracking-widest text-xs py-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20">
+                    <CheckCircle2 size={18} />
+                    Missão_Sincronizada
+                  </div>
+                  {selectedDay.id === 8 && (
+                    <a
+                      href="https://www.contate.me/certificadonex"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-5 bg-emerald-600 text-white rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.4em] italic shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3 animate-pulse"
+                    >
+                      SOLICITAR_CERTIFICADO <ExternalLink size={18} />
+                    </a>
+                  )}
+                </div>
+              ) : selectedDay.id === 8 ? (
+                <button
+                  onClick={() => {
+                    handleCompleteDay(selectedDay.id);
+                    window.open('https://www.contate.me/certificadonex', '_blank');
+                  }}
+                  className="w-full py-5 bg-white text-black rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.4em] italic shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  CONCLUIR PROTOCOLO & SOLICITAR <ExternalLink size={14} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleCompleteDay(selectedDay.id)}
+                  className="w-full py-5 bg-white text-black rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-[0.4em] italic shadow-2xl hover:scale-105 active:scale-95 transition-all"
+                >
+                  CONCLUIR_MISSÃO_SYNC
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
