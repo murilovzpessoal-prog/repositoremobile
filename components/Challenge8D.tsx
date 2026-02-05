@@ -79,20 +79,33 @@ const Challenge8D: React.FC<Challenge8DProps> = ({ completedDays, onUpdateProgre
 
   if (view === 'intro') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050507] p-6 text-center animate-in fade-in duration-1000">
-        <div className="max-w-4xl w-full space-y-10">
-          <div className="space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 mx-auto">
-              <span className="text-[8px] font-black text-white/50 uppercase tracking-[0.2em] italic">Protocolo Elite 8 Dias</span>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#050507] p-8 text-center animate-in fade-in duration-1000 overflow-hidden relative">
+        <div className="absolute top-[10%] left-[10%] w-[400px] h-[400px] bg-purple-600/5 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[10%] right-[10%] w-[300px] h-[300px] bg-blue-600/5 blur-[100px] rounded-full" />
+
+        <div className="max-w-2xl w-full space-y-12 relative z-10 flex flex-col items-center">
+          <div className="space-y-6 flex flex-col items-center">
+            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md">
+              <Zap size={12} className="text-purple-500" />
+              <span className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] italic">Protocolo Elite 8 Dias</span>
             </div>
-            <h1 className="text-[28px] md:text-[84px] font-black text-white tracking-tighter italic uppercase">
-              DESAFIO <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-200 to-white">8D SaaS.</span>
-            </h1>
-            <p className="text-slate-400 text-sm md:text-xl font-medium max-w-xl mx-auto opacity-70">Transforme sua visão em execução real.</p>
+
+            <div className="space-y-4 text-center">
+              <h1 className="text-[40px] md:text-[84px] font-black text-white tracking-tighter italic uppercase leading-[0.9]">
+                DESAFIO <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-indigo-200 to-white">8D SAAS.</span>
+              </h1>
+              <p className="text-slate-400 text-sm md:text-xl font-medium max-w-sm mx-auto opacity-70 leading-relaxed">
+                Transforme sua visão em execução real através do protocolo de materialização.
+              </p>
+            </div>
           </div>
-          <button onClick={() => setView('dashboard')} className="px-10 py-5 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-[0.4em] italic shadow-2xl hover:scale-105 active:scale-95 transition-all duration-700 flex items-center justify-center gap-4 mx-auto">
+
+          <button
+            onClick={() => setView('dashboard')}
+            className="w-full max-w-[280px] py-6 bg-white text-black rounded-2xl font-black text-xs uppercase tracking-[0.4em] italic shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:scale-105 active:scale-95 transition-all duration-500 flex items-center justify-center gap-4 group"
+          >
             <span>Iniciar Protocolo</span>
-            <ArrowRight size={18} />
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </div>

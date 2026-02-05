@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile close button */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden absolute top-6 right-6 p-2 text-gray-600 hover:text-white transition-colors"
+        className="md:hidden absolute top-6 right-6 p-3 bg-white/5 border border-white/10 rounded-2xl text-gray-400 hover:text-white hover:bg-white/10 transition-all z-[110] active:scale-90"
       >
         <X size={24} />
       </button>

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ShieldCheck, Search, Bell, Menu } from 'lucide-react';
+import { ShieldCheck, Search, Bell, MoreVertical } from 'lucide-react';
 
 interface HeaderProps {
   userName: string;
@@ -27,13 +27,13 @@ const Header: React.FC<HeaderProps> = ({ userName, onOpenMenu }) => {
             IA em <span className="text-emerald-500">alta performance</span>.
           </p>
         </div>
-        
+
         {/* Mobile menu toggle */}
-        <button 
+        <button
           onClick={onOpenMenu}
-          className="lg:hidden p-3 bg-[#0F0F12] border border-white/5 rounded-xl text-white shadow-xl"
+          className="lg:hidden p-3 bg-[#0F0F12] border border-white/5 rounded-xl text-white shadow-xl active:scale-95 transition-all"
         >
-          <Menu size={24} />
+          <MoreVertical size={24} />
         </button>
       </div>
 
@@ -43,8 +43,8 @@ const Header: React.FC<HeaderProps> = ({ userName, onOpenMenu }) => {
           <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none text-gray-500 group-focus-within:text-purple-500 transition-colors">
             <Search size={18} />
           </div>
-          <input 
-            type="text" 
+          <input
+            type="text"
             placeholder="Buscar projetos ou ferramentas..."
             className="bg-[#0F0F12] border border-white/5 rounded-2xl py-3.5 pl-14 pr-6 text-sm text-white focus:outline-none focus:border-purple-500/50 focus:ring-4 focus:ring-purple-500/10 transition-all w-full lg:w-[320px] font-medium"
           />
