@@ -80,24 +80,32 @@ const ModuleLessons: React.FC<ModuleLessonsProps> = ({
       </header>
 
       <main className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        <aside className="w-full lg:w-[380px] border-r border-white/5 bg-[#08080A]/40 flex flex-col shrink-0 lg:h-full max-h-[30vh] lg:max-h-none order-2 lg:order-1 overflow-y-auto no-scrollbar">
-          <div className="p-4 md:p-8 border-b border-white/5 sticky top-0 bg-[#08080A] z-10">
-            <h4 className="text-[9px] font-black text-gray-500 uppercase tracking-widest">Playlist_Elite</h4>
+        <aside className="w-full lg:w-[400px] border-r border-white/5 bg-[#08080A]/60 flex flex-col shrink-0 lg:h-full max-h-[50vh] lg:max-h-none order-2 lg:order-1 overflow-y-auto no-scrollbar pb-10">
+          <div className="p-6 border-b border-white/5 sticky top-0 bg-[#08080A] z-10 flex items-center justify-between">
+            <h4 className="text-[10px] font-black text-white/40 uppercase tracking-[0.3em] italic">Playlist_Elite</h4>
+            <div className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
           </div>
-          <div className="flex-1 p-2 md:p-4 space-y-1">
+          <div className="flex-1 p-4 space-y-3">
             {LESSONS.map((lesson) => (
               <button
                 key={lesson.id}
                 onClick={() => setCurrentLesson(lesson)}
-                className={`w-full flex items-center gap-3 p-3 md:p-4 rounded-xl transition-all border text-left ${currentLesson.id === lesson.id ? 'bg-purple-600/10 border-purple-500/40' : 'bg-transparent border-transparent hover:bg-white/5'}`}
+                className={`w-full flex items-center gap-4 p-4 rounded-[20px] transition-all duration-300 border text-left group ${currentLesson.id === lesson.id ? 'bg-purple-600/10 border-purple-500/40 shadow-[0_10px_30px_rgba(168,85,247,0.1)]' : 'bg-[#0F0F12] border-white/[0.03] hover:border-white/10'}`}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center border ${currentLesson.id === lesson.id ? 'bg-purple-600 text-white' : 'bg-white/5 text-gray-700'}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 transition-transform duration-500 ${currentLesson.id === lesson.id ? 'bg-purple-600 text-white scale-110 shadow-lg shadow-purple-600/20' : 'bg-white/5 text-gray-700'}`}>
                   {getLessonIcon(lesson, currentLesson.id === lesson.id)}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h5 className={`text-[11px] font-bold tracking-tight truncate ${currentLesson.id === lesson.id ? 'text-white' : 'text-gray-400'}`}>{lesson.title}</h5>
-                  <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest">{lesson.duration || 'Recurso'}</span>
+                  <h5 className={`text-xs md:text-sm font-bold tracking-tight mb-1 transition-colors ${currentLesson.id === lesson.id ? 'text-white' : 'text-gray-400 group-hover:text-gray-300'}`}>{lesson.title}</h5>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest leading-none">{lesson.duration || 'Recurso'}</span>
+                    <div className="w-1 h-1 rounded-full bg-white/5" />
+                    <span className="text-[8px] font-black text-purple-500/40 uppercase tracking-widest leading-none italic">{lesson.type}</span>
+                  </div>
                 </div>
+                {currentLesson.id === lesson.id && (
+                  <div className="w-1.5 h-6 bg-purple-500 rounded-full" />
+                )}
               </button>
             ))}
           </div>
